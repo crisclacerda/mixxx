@@ -115,6 +115,7 @@ void BeatGrindEffect::processChannel(
     if (enableState == EffectEnableState::Enabling) {
         gs.write_position = 0;
         gs.read_position = 0;
+        gs.isRecording = true;
     }
 
     int delay_frames;
@@ -149,37 +150,32 @@ void BeatGrindEffect::processChannel(
 
     RampingValue<CSAMPLE_GAIN> feedback(feedback_current, gs.prev_feedback,
                                         bufferParameters.framesPerBuffer());
-
-    qDebug() << "loop samples" << delay_samples;
-    qDebug() << "write pos" << gs.write_position;
-    qDebug() << "read pos" << gs.read_position;
     
-    for (unsigned int i = 0;
-            i < bufferParameters.samplesPerBuffer();
-            i += bufferParameters.channelCount()) {
+    for (unsigned int frame = 0;
+            frame < bufferParameters.samplesPerBuffer();
+            frame += bufferParameters.channelCount()) {
         CSAMPLE_GAIN send_ramped = send.getNext();
-        CSAMPLE_GAIN feedback_ramped = feedback.getNext();
-        auto bufferedSample = 
-            std::make_unique<CSAMPLE []>(bufferParameters.channelCount());
+        CSAMPLE_GAIN feedback_ramped = feedback.getNext();    
 
         for (int channel = 0; channel < bufferParameters.channelCount(); channel++) {
             if (gs.isRecording) {
                 if (gs.write_position >= gs.delay_buf.size()) {
                     gs.isRecording = false;
-                }
-                else {
-                    gs.delay_buf[gs.write_position++] = pInput[i + channel];
+                } else {
+                    gs.delay_buf[gs.write_position] = pInput[frame + channel];
+                    gs.write_position += 1;
                 }
             }
             if (gs.write_position >= delay_samples) {
                 if(gs.read_position >= delay_samples) {
                     gs.read_position = 0;
                 }
-                    bufferedSample[channel] = gs.delay_buf[gs.read_position++];
+                gs.bufferedSample[channel] = gs.delay_buf[gs.read_position];
+                gs.read_position += 1;
             }
-            pOutput[i + channel] = SampleUtil::clampSample(
-                pInput[i + channel] * send_ramped +
-                bufferedSample[channel] * feedback_ramped);
+            pOutput[frame + channel] = SampleUtil::clampSample(
+                pInput[frame + channel] * send_ramped +
+                gs.bufferedSample[channel] * feedback_ramped);
         }
     }
     // The ramping of the send parameter handles ramping when enabling, so

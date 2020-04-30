@@ -26,6 +26,7 @@ class BeatGrindState : public EffectState {
     void audioParametersChanged(const mixxx::EngineParameters bufferParameters) {
         delay_buf = mixxx::SampleBuffer(kMaxDelaySeconds
                 * bufferParameters.sampleRate() * bufferParameters.channelCount());
+        bufferedSample.reserve(bufferParameters.channelCount());
     };
 
     void clear() {
@@ -36,6 +37,7 @@ class BeatGrindState : public EffectState {
     };
 
     mixxx::SampleBuffer delay_buf;
+    std::vector<CSAMPLE> bufferedSample;
     CSAMPLE_GAIN prev_send;
     CSAMPLE_GAIN prev_feedback;
     int prev_delay_samples;
