@@ -25,15 +25,15 @@ EffectManifestPointer BeatGrindEffect::getManifest() {
     pManifest->setAuthor("The Mixxx Team");
     pManifest->setVersion("1.0");
     pManifest->setDescription(QObject::tr(
-      "Stores the input signal in a temporary buffer and outputs it after a short time"));
+      "Stores the input signal in a temporary buffer and loops it"));
     pManifest->setMetaknobDefault(db2ratio(-3.0));
 
     EffectManifestParameterPointer delay = pManifest->addParameter();
-    delay->setId("delay_time");
-    delay->setName(QObject::tr("Time"));
-    delay->setShortName(QObject::tr("Time"));
+    delay->setId("loop_length");
+    delay->setName(QObject::tr("Length"));
+    delay->setShortName(QObject::tr("Length"));
     delay->setDescription(QObject::tr(
-        "Delay time\n"
+        "Length of the loop\n"
         "1/8 - 2 beats if tempo is detected\n"
         "1/8 - 2 seconds if no tempo is detected"));
     delay->setValueScaler(EffectManifestParameter::ValueScaler::LINEAR);
@@ -53,22 +53,22 @@ EffectManifestPointer BeatGrindEffect::getManifest() {
     quantize->setRange(0, 1, 1);
 
     EffectManifestParameterPointer feedback = pManifest->addParameter();
-    feedback->setId("feedback_amount");
-    feedback->setName(QObject::tr("Feedback"));
-    feedback->setShortName(QObject::tr("Feedback"));
+    feedback->setId("amplitude");
+    feedback->setName(QObject::tr("Amplitude"));
+    feedback->setShortName(QObject::tr("Amplitude"));
     feedback->setDescription(QObject::tr(
-        "Amount the echo fades each time it loops"));
+        "Volume of loop"));
     feedback->setValueScaler(EffectManifestParameter::ValueScaler::LINEAR);
     feedback->setSemanticHint(EffectManifestParameter::SemanticHint::UNKNOWN);
     feedback->setUnitsHint(EffectManifestParameter::UnitsHint::UNKNOWN);
     feedback->setRange(0.00, db2ratio(-3.0), 1.00);
 
     EffectManifestParameterPointer send = pManifest->addParameter();
-    send->setId("send_amount");
-    send->setName(QObject::tr("Send"));
-    send->setShortName(QObject::tr("Send"));
+    send->setId("dry_wet");
+    send->setName(QObject::tr("Dry/Wet"));
+    send->setShortName(QObject::tr("Dry/Wet"));
     send->setDescription(QObject::tr(
-        "How much of the signal to send into the delay buffer"));
+        "How much of the dry signal or the loop"));
     send->setValueScaler(EffectManifestParameter::ValueScaler::LINEAR);
     send->setSemanticHint(EffectManifestParameter::SemanticHint::UNKNOWN);
     send->setUnitsHint(EffectManifestParameter::UnitsHint::UNKNOWN);
@@ -91,10 +91,10 @@ EffectManifestPointer BeatGrindEffect::getManifest() {
 
 void BeatGrindEffect::loadEngineEffectParameters(
         const QMap<QString, EngineEffectParameterPointer>& parameters) {
-    m_pDelayParameter = parameters.value("delay_time");
+    m_pDelayParameter = parameters.value("loop_length");
     m_pQuantizeParameter = parameters.value("quantize");
-    m_pSendParameter = parameters.value("send_amount");
-    m_pFeedbackParameter = parameters.value("feedback_amount");
+    m_pSendParameter = parameters.value("dry_wet");
+    m_pFeedbackParameter = parameters.value("amplitude");
     m_pTripletParameter = parameters.value("triplet");
 }
 
