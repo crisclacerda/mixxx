@@ -810,6 +810,7 @@ class MixxxCore(Feature):
                    "src/effects/backends/effectmanifestparameter.cpp",
 
                    "src/effects/backends/builtin/builtinbackend.cpp",
+                   "src/effects/backends/builtin/beatgrindeffect.cpp",
                    "src/effects/backends/builtin/bitcrushereffect.cpp",
                    "src/effects/backends/builtin/balanceeffect.cpp",
                    "src/effects/backends/builtin/linkwitzriley8eqeffect.cpp",
@@ -992,6 +993,7 @@ class MixxxCore(Feature):
                    "src/widget/weffectparameterknobcomposed.cpp",
                    "src/widget/weffectbuttonparameter.cpp",
                    "src/widget/weffectparameterbase.cpp",
+                   "src/widget/weffectchainpresetselector.cpp",
                    "src/widget/wtime.cpp",
                    "src/widget/wrecordingduration.cpp",
                    "src/widget/wkey.cpp",

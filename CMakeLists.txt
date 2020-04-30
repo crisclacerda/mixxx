@@ -249,6 +249,7 @@ add_library(mixxx-lib STATIC EXCLUDE_FROM_ALL
   src/effects/backends/effectmanifestparameter.cpp
   src/effects/backends/builtin/autopaneffect.cpp
   src/effects/backends/builtin/balanceeffect.cpp
+  src/effects/backends/builtin/beatgrindeffect.cpp
   src/effects/backends/builtin/bessel4lvmixeqeffect.cpp
   src/effects/backends/builtin/bessel8lvmixeqeffect.cpp
   src/effects/backends/builtin/biquadfullkilleqeffect.cpp
