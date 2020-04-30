@@ -167,7 +167,7 @@ void BeatGrindEffect::processChannel(
                 }
             }
             if (gs.write_position >= delay_samples) {
-                if(gs.read_position >= delay_samples) {
+                if (gs.read_position >= delay_samples) {
                     gs.read_position = 0;
                 }
                 gs.bufferedSample[channel] = gs.delay_buf[gs.read_position];

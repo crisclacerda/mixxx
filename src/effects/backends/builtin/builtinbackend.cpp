@@ -37,7 +37,7 @@ BuiltInBackend::BuiltInBackend() {
     registerEffect<GraphicEQEffect>();
     registerEffect<ParametricEQEffect>();
     registerEffect<LoudnessContourEffect>();
-    // Fading Effectsc
+    // Fading Effects
     registerEffect<FilterEffect>();
     registerEffect<MoogLadder4FilterEffect>();
     registerEffect<BitCrusherEffect>();
