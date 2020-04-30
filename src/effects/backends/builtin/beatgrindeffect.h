@@ -24,27 +24,20 @@ class BeatGrindState : public EffectState {
     }
 
     void audioParametersChanged(const mixxx::EngineParameters bufferParameters) {
-        delay_buf = mixxx::SampleBuffer(kMaxDelaySeconds
+        loop = mixxx::SampleBuffer(kMaxDelaySeconds
                 * bufferParameters.sampleRate() * bufferParameters.channelCount());
-        bufferedSample.reserve(bufferParameters.channelCount());
     };
 
     void clear() {
-        delay_buf.clear();
-        prev_send = 0.0f;
-        prev_feedback= 0.0f;
-        write_position = 0;
+        writeSamplePos = 0;
+        readSamplePos = 0;
+        isRecording = true;
     };
 
-    mixxx::SampleBuffer delay_buf;
-    std::vector<CSAMPLE> bufferedSample;
-    CSAMPLE_GAIN prev_send;
-    CSAMPLE_GAIN prev_feedback;
-    int prev_delay_samples;
-    int read_position;
-    int write_position;
+    mixxx::SampleBuffer loop;
+    int readSamplePos;
+    int writeSamplePos;
     bool isRecording;
-    unsigned int currentFrame;
 };
 
 class BeatGrindEffect : public EffectProcessorImpl<BeatGrindState> {
@@ -68,11 +61,9 @@ class BeatGrindEffect : public EffectProcessorImpl<BeatGrindState> {
     QString debugString() const {
         return getId();
     }
-    EngineEffectParameterPointer m_pQuantizeParameter;
-    EngineEffectParameterPointer m_pDelayParameter;
-    EngineEffectParameterPointer m_pSendParameter;
-    EngineEffectParameterPointer m_pFeedbackParameter;
+    EngineEffectParameterPointer m_pLengthParameter;
+    EngineEffectParameterPointer m_pMixParameter;
     EngineEffectParameterPointer m_pTripletParameter;
-
+    EngineEffectParameterPointer m_pQuantizeParameter;
     DISALLOW_COPY_AND_ASSIGN(BeatGrindEffect);
 };
