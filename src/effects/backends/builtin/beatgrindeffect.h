@@ -21,6 +21,7 @@ class BeatGrindState : public EffectState {
            : EffectState(bufferParameters) {
         audioParametersChanged(bufferParameters);
        clear();
+       mixPrev = 0;
     }
 
     void audioParametersChanged(const mixxx::EngineParameters bufferParameters) {
@@ -38,6 +39,7 @@ class BeatGrindState : public EffectState {
     int readSamplePos;
     int writeSamplePos;
     bool isRecording;
+    double mixPrev;
 };
 
 class BeatGrindEffect : public EffectProcessorImpl<BeatGrindState> {

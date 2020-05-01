@@ -81,6 +81,7 @@ void BeatGrindEffect::loadEngineEffectParameters(
     m_pQuantizeParameter = parameters.value("quantize");
     m_pMixParameter = parameters.value("mix");
     m_pTripletParameter = parameters.value("triplet");
+    
 }
 
 void BeatGrindEffect::processChannel(
@@ -125,12 +126,15 @@ void BeatGrindEffect::processChannel(
     VERIFY_OR_DEBUG_ASSERT(loopSamples <= gs.loop.size()) {
         loopSamples = gs.loop.size();
     }
+    RampingValue<CSAMPLE_GAIN> mixRamp(mixValue, gs.mixPrev,
+                                    bufferParameters.framesPerBuffer());
 
     for (unsigned int frame = 0;
             frame < bufferParameters.samplesPerBuffer();
             frame += bufferParameters.channelCount()) {
   
         for (int channel = 0; channel < bufferParameters.channelCount(); channel++) {
+            CSAMPLE_GAIN mixRamped = mixRamp.getNext();
             // record loop
             if (gs.isRecording) {
                 if (gs.writeSamplePos >= gs.loop.size()) {
@@ -151,8 +155,9 @@ void BeatGrindEffect::processChannel(
                 gs.readSamplePos += 1;
             }
             pOutput[frame + channel] = 
-                pInput[frame + channel] * (1 - mixValue) +
-                wetValue * mixValue;
+                pInput[frame + channel] * (1 - mixRamped) +
+                wetValue * mixRamped;
         }
     }
+    gs.mixPrev = mixValue;
 }
