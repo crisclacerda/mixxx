@@ -22,10 +22,14 @@ class BeatGrindState : public EffectState {
         audioParametersChanged(bufferParameters);
        clear();
        mixPrev = 0;
+       startPos = 0;
+       selectedLoop = loop.data();
     }
 
     void audioParametersChanged(const mixxx::EngineParameters bufferParameters) {
         loop = mixxx::SampleBuffer(kMaxDelaySeconds
+                * bufferParameters.sampleRate() * bufferParameters.channelCount());
+        reverseLoop = mixxx::SampleBuffer(kMaxDelaySeconds
                 * bufferParameters.sampleRate() * bufferParameters.channelCount());
     };
 
@@ -36,8 +40,12 @@ class BeatGrindState : public EffectState {
     };
 
     mixxx::SampleBuffer loop;
+    mixxx::SampleBuffer reverseLoop;
+    CSAMPLE* selectedLoop;
     int readSamplePos;
     int writeSamplePos;
+    int startPos;
+    int endPos;
     bool isRecording;
     double mixPrev;
 };
@@ -67,5 +75,6 @@ class BeatGrindEffect : public EffectProcessorImpl<BeatGrindState> {
     EngineEffectParameterPointer m_pMixParameter;
     EngineEffectParameterPointer m_pTripletParameter;
     EngineEffectParameterPointer m_pQuantizeParameter;
+    EngineEffectParameterPointer m_pReverseParameter;
     DISALLOW_COPY_AND_ASSIGN(BeatGrindEffect);
 };

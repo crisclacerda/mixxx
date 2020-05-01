@@ -49,6 +49,17 @@ EffectManifestPointer BeatGrindEffect::getManifest() {
     quantize->setUnitsHint(EffectManifestParameter::UnitsHint::UNKNOWN);
     quantize->setRange(0, 1, 1);
 
+    EffectManifestParameterPointer reverse = pManifest->addParameter();
+    reverse->setId("reverse");
+    reverse->setName(QObject::tr("Reverse"));
+    reverse->setShortName(QObject::tr("Reverse"));
+    reverse->setDescription(QObject::tr(
+        "Play the recorded loop reversed"));
+    reverse->setValueScaler(EffectManifestParameter::ValueScaler::TOGGLE);
+    reverse->setSemanticHint(EffectManifestParameter::SemanticHint::UNKNOWN);
+    reverse->setUnitsHint(EffectManifestParameter::UnitsHint::UNKNOWN);
+    reverse->setRange(0, 0, 1);
+
     EffectManifestParameterPointer mix = pManifest->addParameter();
     mix->setId("mix");
     mix->setName(QObject::tr("Mix"));
@@ -79,6 +90,7 @@ void BeatGrindEffect::loadEngineEffectParameters(
         const QMap<QString, EngineEffectParameterPointer>& parameters) {
     m_pLengthParameter = parameters.value("loop_length");
     m_pQuantizeParameter = parameters.value("quantize");
+    m_pReverseParameter = parameters.value("reverse");
     m_pMixParameter = parameters.value("mix");
     m_pTripletParameter = parameters.value("triplet");
     
@@ -126,6 +138,16 @@ void BeatGrindEffect::processChannel(
     VERIFY_OR_DEBUG_ASSERT(loopSamples <= gs.loop.size()) {
         loopSamples = gs.loop.size();
     }
+    if (m_pReverseParameter->toBool()) {
+        gs.selectedLoop = gs.reverseLoop.data();
+        gs.startPos = gs.loop.size() - loopSamples;
+        gs.endPos = gs.loop.size();
+    } else {
+        gs.startPos = 0;
+        gs.endPos = loopSamples;
+        gs.selectedLoop = gs.loop.data();
+    }
+
     RampingValue<CSAMPLE_GAIN> mixRamp(mixValue, gs.mixPrev,
                                     bufferParameters.framesPerBuffer());
 
@@ -141,6 +163,8 @@ void BeatGrindEffect::processChannel(
                     gs.isRecording = false;
                 } else {
                     gs.loop[gs.writeSamplePos] = pInput[frame + channel];
+                    gs.reverseLoop[gs.loop.size() - gs.writeSamplePos - 1] =
+                            pInput[frame + channel];
                     gs.writeSamplePos += 1;
                 }
             }
@@ -148,10 +172,10 @@ void BeatGrindEffect::processChannel(
             CSAMPLE wetValue = pInput[frame + channel];
             // play loop
             if (gs.writeSamplePos >= loopSamples) {
-                if (gs.readSamplePos >= loopSamples) {
-                    gs.readSamplePos = 0;
+                if (gs.readSamplePos >= gs.endPos) {
+                    gs.readSamplePos = gs.startPos;
                 }
-                wetValue = gs.loop[gs.readSamplePos];
+                wetValue = gs.selectedLoop[gs.readSamplePos];
                 gs.readSamplePos += 1;
             }
             pOutput[frame + channel] = 
