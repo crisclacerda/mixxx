@@ -39,7 +39,9 @@ DFConfig makeDetectionFunctionConfig(int stepSize, int windowSize) {
 } // namespace
 
 AnalyzerQueenMaryBeats::AnalyzerQueenMaryBeats()
-        : m_iSampleRate(0) {
+        : m_iSampleRate(0),
+            m_windowSize(0),	
+            m_stepSize(0) {
 }
 
 AnalyzerQueenMaryBeats::~AnalyzerQueenMaryBeats() {
