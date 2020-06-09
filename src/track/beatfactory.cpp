@@ -119,9 +119,8 @@ mixxx::BeatsPointer BeatFactory::makePreferredBeats(const Track& track,
         pGrid->setSubVersion(subVersion);
         return mixxx::BeatsPointer(pGrid, &BeatFactory::deleteBeats);
     } else if (version == BEAT_MAP_VERSION) {
-        // iTotalSamples is in samples and FixConstantBeats expects frames
         auto [fixedBeats, tempos] = BeatUtils::FixBeatmap(
-            beats, iSampleRate, iMinBpm, iMaxBpm);
+                beats, iSampleRate, iMinBpm, iMaxBpm);
         mixxx::BeatMap* pBeatMap = new mixxx::BeatMap(track, iSampleRate, fixedBeats);
         pBeatMap->setSubVersion(subVersion);
         return mixxx::BeatsPointer(pBeatMap, &BeatFactory::deleteBeats);
