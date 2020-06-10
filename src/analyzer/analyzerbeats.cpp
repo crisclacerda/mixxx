@@ -8,6 +8,7 @@
 #include "analyzer/constants.h"
 #include "analyzer/plugins/analyzerqueenmarybeats.h"
 #include "analyzer/plugins/analyzersoundtouchbeats.h"
+#include "analyzer/plugins/analyzerqueenmarydownbeats.h"
 #include "track/beatfactory.h"
 #include "track/beatmap.h"
 #include "track/beatutils.h"
@@ -18,6 +19,7 @@ QList<mixxx::AnalyzerPluginInfo> AnalyzerBeats::availablePlugins() {
     QList<mixxx::AnalyzerPluginInfo> plugins;
     // First one below is the default
     plugins.append(mixxx::AnalyzerQueenMaryBeats::pluginInfo());
+    plugins.append(mixxx::AnalyzerQueenMaryDownbeats::pluginInfo());
     plugins.append(mixxx::AnalyzerSoundTouchBeats::pluginInfo());
     return plugins;
 }
@@ -110,6 +112,8 @@ bool AnalyzerBeats::initialize(TrackPointer tio, int sampleRate, int totalSample
             m_pPlugin = std::make_unique<mixxx::AnalyzerQueenMaryBeats>();
         } else if (m_pluginId == mixxx::AnalyzerSoundTouchBeats::pluginInfo().id) {
             m_pPlugin = std::make_unique<mixxx::AnalyzerSoundTouchBeats>();
+        } else if (m_pluginId == mixxx::AnalyzerQueenMaryDownbeats::pluginInfo().id) {
+            m_pPlugin = std::make_unique<mixxx::AnalyzerQueenMaryDownbeats>();
         } else {
             // This must not happen, because we have already verified above
             // that the PlugInId is valid

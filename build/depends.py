@@ -900,6 +900,7 @@ class MixxxCore(Feature):
                    "src/analyzer/analyzersilence.cpp",
                    "src/analyzer/plugins/analyzersoundtouchbeats.cpp",
                    "src/analyzer/plugins/analyzerqueenmarybeats.cpp",
+                   "src/analyzer/plugins/analyzerqueenmarydownbeats.cpp",
                    "src/analyzer/plugins/analyzerqueenmarykey.cpp",
                    "src/analyzer/plugins/buffering_utils.cpp",
 
