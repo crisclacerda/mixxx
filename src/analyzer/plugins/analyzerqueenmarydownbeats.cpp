@@ -116,11 +116,55 @@ bool AnalyzerQueenMaryDownbeats::finalize() {
     size_t downLength = 0;
     const float *downsampled = m_downbeat->getBufferedAudio(downLength);
     m_downbeat->findDownBeats(downsampled, downLength, beats, downbeats);
-    qDebug() << downbeats;
+    std::vector<double> beatsSD;
+    m_downbeat->getBeatSD(beatsSD);
+    qDebug() << beatsSD;
+    // for now we assume that are 3, 4 or 5 beats in a bar
+    constexpr int lowerBeatsPerBar = 3, higherBeatsPerBar = 6;
+    int candidateDownbeatPosition = 0, candidateBeatsPerBar = 0;
+    std::vector<std::vector<double>> beatsSpecDiffs(higherBeatsPerBar - lowerBeatsPerBar);
+    // let's considers all bpb candidates
+    for (candidateBeatsPerBar = lowerBeatsPerBar;
+            candidateBeatsPerBar < higherBeatsPerBar;
+            candidateBeatsPerBar += 1) {
+        beatsSpecDiffs[candidateBeatsPerBar - lowerBeatsPerBar]
+                = std::vector<double>(candidateBeatsPerBar, 0);
+        // and all downbeats position candidates
+        for (candidateDownbeatPosition = 0;
+                candidateDownbeatPosition < candidateBeatsPerBar;
+                candidateDownbeatPosition += 1) {
+            int count = 0;
+            // to compute the mean spec diff of all possible measures
+            for (int barBegin = candidateDownbeatPosition - 1;
+                    barBegin < static_cast<int>(beatsSD.size());
+                    barBegin += candidateBeatsPerBar) {
+                if (barBegin >= 0) {
+                    beatsSpecDiffs[candidateBeatsPerBar - lowerBeatsPerBar]
+                            [candidateDownbeatPosition] += beatsSD[barBegin];
+                    count += 1;
+                }
+            }
+            beatsSpecDiffs[candidateBeatsPerBar - lowerBeatsPerBar]
+                    [candidateDownbeatPosition] /= count;
+        }
+    }
+    int bestBpb = 0, bestDownbeatPos = 0;
+    double value = 0;
+    for (int i = 0; i < static_cast<int>(beatsSpecDiffs.size()); i += 1) {
+        for (int j = 0; j < static_cast<int>(beatsSpecDiffs[i].size()); j += 1) {
+            if (beatsSpecDiffs[i][j] > value) {
+                value = beatsSpecDiffs[i][j];
+                bestBpb = i;
+                bestDownbeatPos = j;
+            }
+            qDebug() << beatsSpecDiffs[i][j];
+        }
+    }
+    qDebug() << bestBpb + lowerBeatsPerBar << bestDownbeatPos + 1;
     int downbeatPositions = 0;
     m_resultBeats.reserve(downbeats.size());
-    for (size_t i = 0; i < beats.size(); ++i) {
-        if (i == downbeats[downbeatPositions] and downbeatPositions < int(downbeats.size())) {
+    for (int i = 0; i < static_cast<int>(beats.size()); ++i) {
+        if (i == downbeats[downbeatPositions] and downbeatPositions < static_cast<int>(downbeats.size())) {
             double result = (beats.at(i) * m_stepSize) - m_stepSize / 2;
             m_resultBeats.push_back(result);
             downbeatPositions++;

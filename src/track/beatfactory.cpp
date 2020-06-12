@@ -120,7 +120,7 @@ mixxx::BeatsPointer BeatFactory::makePreferredBeats(const Track& track,
         return mixxx::BeatsPointer(pGrid, &BeatFactory::deleteBeats);
     } else if (version == BEAT_MAP_VERSION) {
         auto [fixedBeats, tempos] = BeatUtils::FixBeatmap(
-                beats, iSampleRate, iMinBpm, iMaxBpm);
+                beats, iSampleRate, 1, 999);
         mixxx::BeatMap* pBeatMap = new mixxx::BeatMap(track, iSampleRate, fixedBeats);
         pBeatMap->setSubVersion(subVersion);
         return mixxx::BeatsPointer(pBeatMap, &BeatFactory::deleteBeats);

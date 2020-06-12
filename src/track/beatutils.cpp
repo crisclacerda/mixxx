@@ -24,7 +24,7 @@
 
 constexpr int kBeatsToCountTempo = 12;
 
-static bool sDebug = true;
+static bool sDebug = false;
 
 const double kCorrectBeatLocalBpmEpsilon = 0.05; //0.2;
 const int kHistogramDecimalPlaces = 2;
