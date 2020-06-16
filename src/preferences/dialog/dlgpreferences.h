@@ -48,6 +48,7 @@ class DlgPrefAutoDJ;
 class DlgPrefBroadcast;
 class DlgPrefRecord;
 class DlgPrefBeats;
+class DlgPrefRhythm;
 class DlgPrefKey;
 class DlgPrefReplayGain;
 #ifdef __LILV__
@@ -129,8 +130,10 @@ class DlgPreferences : public QDialog, public Ui::DlgPreferencesDlg {
     DlgPrefBroadcast* m_broadcastingPage;
     DlgPrefRecord* m_recordingPage;
     DlgPrefBeats* m_beatgridPage;
+    DlgPrefRhythm* m_rhythmPage;
     DlgPrefKey* m_musicalKeyPage;
     DlgPrefReplayGain* m_replayGainPage;
+
 #ifdef __LILV__
     DlgPrefLV2* m_lv2Page;
 #endif /* __LILV__ */
@@ -157,6 +160,7 @@ class DlgPreferences : public QDialog, public Ui::DlgPreferencesDlg {
     QTreeWidgetItem* m_pBroadcastButton;
     QTreeWidgetItem* m_pRecordingButton;
     QTreeWidgetItem* m_pBeatDetectionButton;
+    QTreeWidgetItem* m_pRhythmDetectionButton;
     QTreeWidgetItem* m_pKeyDetectionButton;
     QTreeWidgetItem* m_pReplayGainButton;
 #ifdef __MODPLUG__

@@ -55,6 +55,7 @@
 
 #include "preferences/dialog/dlgprefrecord.h"
 #include "preferences/dialog/dlgprefbeats.h"
+#include "preferences/dialog/dlgprefrhythm.h"
 #include "preferences/dialog/dlgprefkey.h"
 #include "preferences/dialog/dlgprefreplaygain.h"
 
@@ -148,6 +149,9 @@ DlgPreferences::DlgPreferences(MixxxMainWindow * mixxx, SkinLoader* pSkinLoader,
 
     m_beatgridPage = new DlgPrefBeats(this, m_pConfig);
     addPageWidget (m_beatgridPage);
+
+    m_rhythmPage = new DlgPrefRhythm(this, m_pConfig);
+    addPageWidget (m_rhythmPage);
 
     m_musicalKeyPage = new DlgPrefKey(this, m_pConfig);
     addPageWidget(m_musicalKeyPage);
@@ -295,6 +299,12 @@ void DlgPreferences::createIcons() {
     m_pBeatDetectionButton->setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter);
     m_pBeatDetectionButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
+    m_pRhythmDetectionButton = new QTreeWidgetItem(contentsTreeWidget, QTreeWidgetItem::Type);
+    m_pRhythmDetectionButton->setIcon(0, QIcon(":/images/preferences/ic_preferences_rhythm.svg"));
+    m_pRhythmDetectionButton->setText(0, tr("Rhythm Detection"));
+    m_pRhythmDetectionButton->setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter);
+    m_pRhythmDetectionButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
     m_pKeyDetectionButton = new QTreeWidgetItem(contentsTreeWidget, QTreeWidgetItem::Type);
     m_pKeyDetectionButton->setIcon(0, QIcon(":/images/preferences/ic_preferences_keydetect.svg"));
     m_pKeyDetectionButton->setText(0, tr("Key Detection"));
@@ -365,6 +375,8 @@ void DlgPreferences::changePage(QTreeWidgetItem* current, QTreeWidgetItem* previ
         switchToPage(m_recordingPage);
     } else if (current == m_pBeatDetectionButton) {
         switchToPage(m_beatgridPage);
+    } else if (current == m_pRhythmDetectionButton) {
+        switchToPage(m_rhythmPage);
     } else if (current == m_pKeyDetectionButton) {
         switchToPage(m_musicalKeyPage);
     } else if (current == m_pReplayGainButton) {
